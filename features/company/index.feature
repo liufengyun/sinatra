@@ -20,6 +20,7 @@ Feature: Get Company List
     And the JSON response should have "$.limit" with the text "50"
     And the JSON response should have "$.offset" with the text "0"
     And the JSON response should have "$.companies[*]" with a length of 4
+    And the JSON response should have "$.companies[?(@.name=='Google')].id"
     And the JSON response should have "$.companies[?(@.name=='Google')].address" with the text "Street No #23"
     And the JSON response should have "$.companies[?(@.name=='Google')].city" with the text "New Yourk"
     And the JSON response should have "$.companies[?(@.name=='Google')].country" with the text "USA"
@@ -34,6 +35,7 @@ Feature: Get Company List
     And the JSON response should have "$.limit" with the text "2"
     And the JSON response should have "$.offset" with the text "1"
     And the JSON response should have "$.companies[*]" with a length of 2
+    And the JSON response should have "$.companies[?(@.name=='IBM')].id"
     And the JSON response should have "$.companies[?(@.name=='IBM')].address" with the text "Street No #25"
     And the JSON response should have "$.companies[?(@.name=='IBM')].city" with the text "Tokyo"
     And the JSON response should have "$.companies[?(@.name=='IBM')].country" with the text "JP"

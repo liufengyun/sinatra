@@ -1,7 +1,7 @@
-Feature: Get Person Information
+Feature: Delete Person
   In order to manage people of a company
   As a user
-  I want to get the detail information of a person
+  I want to destroy a person record
 
   Background:
     Given I send and accept JSON
@@ -14,16 +14,14 @@ Feature: Get Person Information
       |   Jack    |
       |  Smith    |
 
-  Scenario: Get person information normally
-    When I send a get person request for "Jack"
+  Scenario: Destroy person normally
+    When I send a destroy person request for "Jack"
     Then the response status should be "200"
     And the JSON response should have "$.success" with the text "true"
-    And the JSON response should have "$.person.id"
-    And the JSON response should have "$.person.name" with the text "Jack"
-    And the JSON response should have "$.person.company_id"
+    And person "Jack" should not exist
 
-  Scenario: Get person information with invalid person id
-    When I send a GET request to "/persons/5000"
+  Scenario: Destroy person with invalid person id
+    When I send a GET request to "/persons/10000"
     Then the response status should be "200"
     And the JSON response should have "$.success" with the text "false"
     And the JSON response should have "$.message" with the text "person doesn't exist"

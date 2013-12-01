@@ -20,6 +20,7 @@ Feature: Create Company
       """
     Then the response status should be "200"
     And the JSON response should have "$.success" with the text "true"
+    And the JSON response should have "$.company.id"
     And the JSON response should have "$.company.name" with the text "Google"
     And the JSON response should have "$.company.address" with the text "Street No #23"
     And the JSON response should have "$.company.city" with the text "New York"

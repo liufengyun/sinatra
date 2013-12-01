@@ -23,6 +23,7 @@ Feature: Update Company Information
       """
     Then the response status should be "200"
     And the JSON response should have "$.success" with the text "true"
+    And the JSON response should have "$.company.id"
     And the JSON response should have "$.company.name" with the text "google"
     And the JSON response should have "$.company.address" with the text "Street No #100"
     And the JSON response should have "$.company.city" with the text "Paris"
@@ -43,6 +44,7 @@ Feature: Update Company Information
       """
     Then the response status should be "200"
     And the JSON response should have "$.success" with the text "false"
+    And the JSON response should have "$.message" with the text "company doesn't exist"
 
   Scenario: Update company with required fields empty
     When I update company "Google" with following:

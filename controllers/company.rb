@@ -19,9 +19,9 @@ get '/companies/:id' do
 end
 
 get '/companies' do
-  if (params.key?(:offset) && params[:offset] < 0) ||
-     (params.key?(:limit) && params[:limit] <= 0)
-     return json success: false
+  if (params.key?("offset") && params["offset"].to_i < 0) ||
+     (params.key?("limit") && params["limit"].to_i <= 0)
+     return json success: false, message: "invalid parameter value"
   end
 
   params[:offset] ||= 0
