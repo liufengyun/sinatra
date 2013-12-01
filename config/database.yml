@@ -1,0 +1,11 @@
+development:
+  adapter: postgresql
+  database: sinatra_development
+  host: localhost
+  pool: 5
+
+test: &test
+  adapter: postgresql
+  database: sinatra_test
+  host: localhost
+  pool: 5
