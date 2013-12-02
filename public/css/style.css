@@ -7,7 +7,7 @@ body {
   cursor: pointer;
 }
 
-tr:hover .destroy,  tr:hover .edit {
+tr.active .destroy,  tr.active .edit {
   display: inline;
 }
 

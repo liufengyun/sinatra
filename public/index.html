@@ -101,7 +101,7 @@
     </div><!-- /.modal -->
 
 
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered">
       <thead>
         <tr>
           <td>Name</td>
@@ -115,7 +115,7 @@
       </thead>
       <tbody>
         {{#each itemController="company"}}
-        <tr>
+        <tr {{action "editPersons" on="click"}} {{bind-attr class="selected:active"}}>
           <td>{{name}}</td>
           <td>{{country}}</td>
           <td>{{city}}</td>
@@ -130,6 +130,8 @@
         {{/each}}
       </tbody>
     </table>
+
+    {{outlet persons}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="edit-company">
@@ -181,6 +183,18 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="persons">
+    <div class="form">
+      {{input type="text" id="new-person" placeholder="Add New Person" value=newName action="createPerson" class="form-control"}}
+    </div>
+
+    <ul>
+    {{#each}}
+      <li>{{name}}</li>
+    {{/each}}
+    </ul>
   </script>
 
   <script src="js/libs/jquery-1.10.2.js"></script>

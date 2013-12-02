@@ -7,7 +7,16 @@ App.Router = Ember.Router.extend({
 });
 
 App.Router.map(function() {
-  this.resource('companies', { path: '/' });
+  this.resource('companies')
+  this.resource('company', { path: '/company/:company_id' }, function() {
+    this.route('persons');
+  });
+});
+
+App.IndexRoute = Ember.Route.extend({
+  redirect: function() {
+    this.transitionTo('companies');
+  }
 });
 
 App.ApplicationRoute = Ember.Route.extend({
@@ -29,15 +38,30 @@ App.ApplicationRoute = Ember.Route.extend({
   }
 });
 
+//////// Companies
+
 App.CompaniesRoute = Ember.Route.extend({
   model: function() {
     return Ember.$.getJSON('/companies').then(function(data) {
       return data.companies;
     })
+  },
+  actions: {
+    showPersonsPanel: function(company_id) {
+      this.controllerFor('persons').set('company_id', company_id);
+      return this.render('persons', {
+        into: 'companies',
+        outlet: 'persons'
+      });
+    },
+    hidePersonsPanel: function() {
+      return this.disconnectOutlet({
+        outlet: 'persons',
+        parentView: 'companies'
+      });
+    }
   }
 });
-
-//////// Controllers
 
 App.CompaniesController = Ember.ArrayController.extend({
   actions: {
@@ -47,7 +71,7 @@ App.CompaniesController = Ember.ArrayController.extend({
       var payload = this.getProperties('name', 'country', 'city', 'address', 'email', 'phone')
       Ember.$.post('/companies', payload).then(function(data) {
         if (data.success) {
-          self.pushObject(data.company)
+          self.pushObject(data.company);
 
           $('#new-company-dialog').modal('hide');
 
@@ -61,6 +85,15 @@ App.CompaniesController = Ember.ArrayController.extend({
           alert(data.message);
         }
       })
+    },
+    updateSelectedRow: function(row) {
+      var lastSelected = this.get('selectedRow');
+      if (lastSelected) {
+        lastSelected.set('selected', false);
+      }
+
+      row.set('selected', true);
+      this.set('selectedRow', row);
     }
   }
 })
@@ -85,6 +118,11 @@ App.CompanyController = Ember.ObjectController.extend({
           alert(data.message);
         }
       })
+    },
+    editPersons: function() {
+      var company = this.get('model');
+      this.send('updateSelectedRow', this);
+      this.transitionToRoute('company.persons', company);
     }
   }
 });
@@ -131,5 +169,42 @@ App.EditCompanyView = Ember.View.extend({
       self.$('.modal').modal('hide');
       self.send('closeModal');
     });
+  }
+})
+
+//////// Persons
+
+App.CompanyPersonsRoute = Ember.Route.extend({
+  model: function(params) {
+    this.set('company_id', params.company_id);
+    return Ember.$.getJSON('/persons?company_id=' + params.company_id).then(function(data) {
+      return data.persons;
+    })
+  },
+  renderTemplate: function(company_id) {
+    return this.render('persons', {
+      into: 'companies',
+      outlet: 'persons'
+    });
+  }
+});
+
+
+App.CompanyPersonsController = Ember.ArrayController.extend({
+  actions: {
+    createPerson: function () {
+      var self = this;
+
+      var payload = {name: this.get('newName'), company_id: this.company_id}
+      Ember.$.post('/persons', payload).then(function(data) {
+        if (data.success) {
+          self.pushObject(data.person);
+
+          self.set('newName', '');
+        } else {
+          alert(data.message);
+        }
+      })
+    }
   }
 })
