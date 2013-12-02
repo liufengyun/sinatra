@@ -23,6 +23,11 @@ Dir['./models/*.rb'].each {|file| require file }
 # load controllers
 Dir['./controllers/*.rb'].each {|file| require file }
 
+# home page
+get '/' do
+  send_file File.join(settings.public_folder, 'index.html')
+end
+
 # test route
 get '/hello' do
   json success: true, message: 'hello world'

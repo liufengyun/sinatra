@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sinatra App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Sinatra</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="https://github.com/liufengyun/sinatra">Github</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+
+  <div class="container" id="app">
+  </div>
+
+  <script type="text/x-handlebars">
+    <h2>Welcome to Sinatra!</h2>
+
+    {{outlet}}
+    {{outlet modal}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="companies">
+    <p class="clearfix">
+      <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#new-company-dialog">New Company</button>
+    </p>
+
+    <div class="modal fade" id="new-company-dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Create New Company</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label class="control-label">Name</label>
+                {{input type="text" class="form-control" placeholder="company name" value=name}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">Country</label>
+                {{input type="text" class="form-control" placeholder="country" value=country}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">City</label>
+                {{input type="text" class="form-control" placeholder="city" value=city}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">Address</label>
+                {{input type="text" class="form-control" placeholder="address" value=address}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">Email</label>
+                {{input type="text" class="form-control" placeholder="email" value=email}}
+              </div>
+
+
+              <div class="form-group">
+                <label class="control-label">Phone</label>
+                {{input type="text" class="form-control" placeholder="phone" value=phone}}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" {{action 'createCompany'}}>Create</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <td>Name</td>
+          <td>Country</td>
+          <td>City</td>
+          <td>Address</td>
+          <td>Email</td>
+          <td>Phone</td>
+          <td style="min-width:50px;"></td>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each itemController="company"}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{country}}</td>
+          <td>{{city}}</td>
+          <td>{{address}}</td>
+          <td>{{email}}</td>
+          <td>{{phone}}</td>
+          <td>
+            <i class="glyphicon glyphicon-trash destroy" {{action 'destroyCompany'}}></i>
+            <i class="glyphicon glyphicon-edit edit" {{action 'editCompany'}}></i>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="edit-company">
+    <div class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Edit Company</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label class="control-label">Name</label>
+                {{input type="text" class="form-control" placeholder="company name" value=name}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">Country</label>
+                {{input type="text" class="form-control" placeholder="country" value=country}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">City</label>
+                {{input type="text" class="form-control" placeholder="city" value=city}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">Address</label>
+                {{input type="text" class="form-control" placeholder="address" value=address}}
+              </div>
+
+              <div class="form-group">
+                <label class="control-label">Email</label>
+                {{input type="text" class="form-control" placeholder="email" value=email}}
+              </div>
+
+
+              <div class="form-group">
+                <label class="control-label">Phone</label>
+                {{input type="text" class="form-control" placeholder="phone" value=phone}}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary update">Update</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  </script>
+
+  <script src="js/libs/jquery-1.10.2.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <script src="js/libs/handlebars-1.1.2.js"></script>
+  <script src="js/libs/ember-1.2.0.js"></script>
+  <script src="js/app.js"></script>
+  <!-- to activate the test runner, add the "?test" query string parameter -->
+  <script src="tests/runner.js"></script>
+</body>
+</html>
