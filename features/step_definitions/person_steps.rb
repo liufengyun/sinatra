@@ -45,3 +45,36 @@ When(/^I send a request to get person list of company "(.*?)" with limit "(.*?)"
 
   request "/persons?company_id=#{company.id}&limit=#{arg2}&offset=#{arg3}", :method => :get
 end
+
+When(/^I attch file "(.*?)" for "(.*?)"$/) do |file, person_name|
+  person = Person.where(name: person_name).first
+
+  key = "company/#{person.company_id}/#{person.id}/passports/#{file}"
+  s3_obj = S3.bucket.objects[key]
+
+  local_file = File.join(settings.root, "features", "fixtures", file)
+  s3_obj.write(File.read(local_file))
+
+  content = {s3_url: S3.object_url(key)}
+
+  request "/persons/#{person.id}/attach", :method => :put, :input => content.to_json
+end
+
+When(/^I detach the file for "(.*?)"$/) do |arg1|
+  person = Person.where(name: arg1).first
+
+  request "/persons/#{person.id}/detach", :method => :delete
+end
+
+Then(/^the file "(.*?)" should (not)?\s?exist for "(.*?)"$/) do |file, negative, person_name|
+  person = Person.where(name: person_name).first
+
+  key = "company/#{person.company_id}/#{person.id}/passports/#{file}"
+
+  if negative
+    S3.bucket.objects[key].exists?.should be_false
+  else
+    S3.bucket.objects[key].exists?.should be_true
+  end
+end
+

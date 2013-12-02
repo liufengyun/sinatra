@@ -7,7 +7,7 @@ require 'sinatra/activerecord'
 Bundler.require(:default, settings.environment)
 
 config_file_content = File.read(File.join(settings.root, "config", "application.yml"))
-Configuration = Hashie::Mash.new YAML.load(ERB.new(config_file_content).result)[settings.environment]
+Configuration = Hashie::Mash.new YAML.load(ERB.new(config_file_content).result)[settings.environment.to_s]
 
 # parse body json
 use Rack::Parser, :parsers => {

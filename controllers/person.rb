@@ -67,3 +67,57 @@ delete '/persons/:id' do
 
   json success: true
 end
+
+# get s3 policy in order to send file directly to s3
+post '/persons/:id/policy' do
+  person = Person.where(id: params[:id]).first
+
+  if person.nil?
+    return json success: false, message: "person doesn't exist"
+  end
+
+  policy = S3.policy(person)
+  signature = S3.signature(policy)
+
+  json policy: policy, signature: signature, key: person.passport_s3_upload_key, success_action_redirect: '/'
+end
+
+# client s3 upload success, process params[:s3_url]
+put '/persons/:id/attach' do
+  person = Person.where(id: params[:id]).first
+
+  if person.nil?
+    return json success: false, message: "person doesn't exist"
+  end
+
+  if params[:s3_url].blank?
+    return json success: false, message: "s3_url is missing"
+  end
+
+  if person.passport_exists?
+    person.delete_passport_file!
+  end
+
+  passport_file_name = File.basename(params[:s3_url])
+  person.update!(passport_file_name: passport_file_name)
+
+  return json success: true, person: person.as_json
+end
+
+# remove s3 file from a person
+delete '/persons/:id/detach' do
+  person = Person.where(id: params[:id]).first
+
+  if person.nil?
+    return json success: false, message: "person doesn't exist"
+  end
+
+  if !person.passport_exists?
+    return json success: false, message: "passport doesn't exist"
+  end
+
+  person.delete_passport_file!
+  person.update(passport_file_name: nil)
+
+  return json success: true, person: person.as_json
+end

@@ -1,4 +1,4 @@
-Feature: Create New User
+Feature: Create New Person
   In order to manage people of a company
   As a user
   I want to create a new user
@@ -10,7 +10,7 @@ Feature: Create New User
       |  Google   | Street No #23   |   New Yourk  |      USA      | test@example.me |   567-2846    |
       |  Apple    | Street No #22   |   Los Angles |      USA      | ipod@example.me |   111-1111    |
 
-  Scenario: Create user normally
+  Scenario: Create person normally
     When I send a POST request to "/persons" with the following:
       """
       {
@@ -24,7 +24,7 @@ Feature: Create New User
     And the JSON response should have "$.person.name" with the text "Jack"
     And the JSON response should have "$.person.company_id"
 
-  Scenario: Create user without name
+  Scenario: Create person without name
     When I send a POST request to "/persons" with the following:
       """
       {
@@ -35,7 +35,7 @@ Feature: Create New User
     Then the response status should be "200"
     And the JSON response should have "$.success" with the text "false"
 
-  Scenario: Create user without company
+  Scenario: Create person without company
     When I send a POST request to "/persons" with the following:
       """
       {
