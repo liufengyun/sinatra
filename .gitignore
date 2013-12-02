@@ -15,3 +15,6 @@
 /log/*.log
 /log/*
 /tmp
+
+# config files
+/config/application.yml

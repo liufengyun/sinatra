@@ -1,5 +1,17 @@
 development:
+  s3:
+    bucket: sinatradevelopment
+    id: your_s3_id
+    secret: your_s3_key
 
 test:
+  s3:
+    bucket: sinatratest
+    id: your_s3_id
+    secret: your_s3_key
 
 production:
+  s3:
+    bucket: <%= ENV['S3_BUCKET'] %>
+    id: <%= ENV['S3_ID'] %>
+    secret: <%= ENV['S3_SECRET'] %>
