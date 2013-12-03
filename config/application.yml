@@ -1,4 +1,5 @@
 development:
+  host: lvh.me
   s3:
     bucket: sinatradevelopment
     id: your_s3_id
@@ -11,6 +12,7 @@ test:
     secret: your_s3_key
 
 production:
+  host: company.herokuapp.com
   s3:
     bucket: <%= ENV['S3_BUCKET'] %>
     id: <%= ENV['S3_ID'] %>
