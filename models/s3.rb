@@ -5,7 +5,7 @@ class S3
     end
 
     def base_uri
-      "https://#{self.bucket_name}.s3.amazonaws.com"
+      "http://#{self.bucket_name}.s3.amazonaws.com"
     end
 
     def object_url(key)
@@ -17,7 +17,7 @@ class S3
       ret = {"expiration" => 30.minutes.from_now.utc.xmlschema,
         "conditions" =>  [
           {"bucket" =>  self.bucket_name},
-          ["starts-with", "$key", person.passport_s3_upload_key],
+          ["starts-with", "$key", "company"],
           {"acl" => "public-read"},
           {"success_action_status" => "200"},
           ["content-length-range", 0, 209715300] # 200MB

@@ -208,8 +208,14 @@
             {{else}}
               <span title="double click to edit" {{action 'editPerson' bubbles=false on=doubleClick}}>{{name}}</span>
             {{/if}}
+            {{#if hasFile}}
+              <a {{bindAttr href="passport_url"}} {{bindAttr download="passport_file_name"}}>{{passport_file_name}}</a>
+              [<a href="javascript:void(0)" title="delete file" {{action 'detachFile' bubbles=false}}>x</a>]
+            {{/if}}
           </td>
-          <td>{{view App.FileUploadView}}</td>
+          <td>
+            {{view App.FileUploadView}}
+          </td>
           <td>
             <i class="glyphicon glyphicon-trash" title="delete person" {{action 'destroyPerson' bubbles=false}}></i>
             <i class="glyphicon glyphicon-edit" title="edit person information" {{action 'editPerson' bubbles=false}}></i>
@@ -224,7 +230,7 @@
     <form action='https://YOURBUCKET.s3.amazonaws.com' enctype='multipart/form-data' method='post'>
       <input name='key' type='hidden'>
       <input name='AWSAccessKeyId' type='hidden' value='YOUR_ACCESS_KEY'>
-      <input name='acl' type='hidden' value='private'>
+      <input name='acl' type='hidden' value='public-read'>
       <input name='success_action_status' type='hidden' value='200'>
       <input name='policy' type='hidden'>
       <input name='signature' type='hidden'>
@@ -236,7 +242,7 @@
         </label>
       </span>
       <div class='progress progress-striped active hide'>
-        <div class='progress-bar'></div>
+        <div class='progress-bar progress-bar-warning'></div>
       </div>
     </form>
   </script>

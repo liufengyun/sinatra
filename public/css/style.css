@@ -22,7 +22,8 @@ tr.active .controls i {
 .file-upload {
   position: relative;
   overflow: hidden;
-  margin: 10px;
+  margin-left: 10px;
+  float: right;
 }
 
 .file-upload .fileinput-button {
@@ -39,4 +40,8 @@ tr.active .controls i {
   cursor: pointer;
   opacity: 0;
   filter: alpha(opacity=0);
+}
+
+.progress {
+  margin-bottom: 0;
 }

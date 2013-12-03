@@ -202,6 +202,11 @@ App.PersonsController = Ember.ArrayController.extend({
 })
 
 App.PersonController = Ember.ObjectController.extend({
+  hasFile: function() {
+    var model = this.get('model');
+    return model.passport_file_name && /\w+/.test(model.passport_file_name);
+  }.property('model.passport_file_name'),
+
   actions: {
     editPerson: function () {
       this.set('isEditing', true)
@@ -239,6 +244,17 @@ App.PersonController = Ember.ObjectController.extend({
           alert(data.message);
         }
       })
+    },
+    detachFile: function() {
+      var person = this.get('model');
+      var self = this;
+      Ember.$.post('/persons/' + person.id + '/detach', {_method: 'delete'}).then(function(data) {
+        if (data.success) {
+          self.setProperties(data.person);
+        } else {
+          alert(data.message);
+        }
+      })
     }
   }
 });
@@ -253,12 +269,10 @@ App.FileUploadView = Ember.View.extend({
   templateName: 'file',
   didInsertElement: function() {
     this.$('form').fileupload({
-      forceIframeTransport: true,
-      autoUpload: true,
       add: this.fileAdded.bind(this),
-      success: this.success.bind(this),
       done: this.done.bind(this),
-      progress: this.progress.bind(this)
+      progress: this.progress.bind(this),
+      fail: this.fail.bind(this)
     });
   },
   fileAdded: function(e, data) {
@@ -266,6 +280,7 @@ App.FileUploadView = Ember.View.extend({
     var controller = this.get('controller');
     $.post('/persons/' + controller.get('id') + '/policy', function(res) {
       self.$('form').attr('action', res.action)
+      self.$('form').find('input[name=AWSAccessKeyId]').val(res.s3_id);
       self.$('form').find('input[name=key]').val(res.key);
       self.$('form').find('input[name=policy]').val(res.policy);
       self.$('form').find('input[name=signature]').val(res.signature);
@@ -275,16 +290,20 @@ App.FileUploadView = Ember.View.extend({
       data.submit();
     });
   },
-  success: function(data) {
-    var url = $(data).find('Location').text();
-    this.send('fileUploadSuccess', url);
-  },
   done: function(e, data) {
+    if(data.textStatus == "success") {
+      this.get('controller').send('fileUploadSuccess', data.files[0].name);
+    }
+    this.$(".progress-bar").css({width: '0%'});
     this.$('form').find('.progress').addClass('hide');
   },
   progress: function(e, data) {
     progress = parseInt(data.loaded / data.total * 100, 10);
     this.$(".progress-bar").css({width: progress + '%'});
+  },
+  fail: function(e, data) {
+    alert("Upload failed.");
+    this.done();
   }
 });
 
