@@ -67,7 +67,7 @@ App.CompaniesController = Ember.ArrayController.extend({
       var payload = this.getProperties('name', 'country', 'city', 'address', 'email', 'phone')
       Ember.$.post('/companies', payload).then(function(data) {
         if (data.success) {
-          self.pushObject(data.company);
+          self.insertAt(0, data.company);
 
           $('#new-company-dialog').modal('hide');
 
@@ -210,7 +210,7 @@ App.PersonsController = Ember.ArrayController.extend({
       var payload = {name: this.get('newName'), company_id: this.company.id}
       Ember.$.post('/persons', payload).then(function(data) {
         if (data.success) {
-          self.pushObject(data.person);
+          self.insertAt(0, data.person);
 
           self.set('newName', '');
         } else {
