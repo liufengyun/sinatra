@@ -1,6 +1,15 @@
 # ReadMe
 
-This is a test sinatra application built with PostgreSQL and Ember.js.
+This is a sinatra application which demonstrates usage of following technologies:
+
+- cucumber
+- PostgreSQL
+- heroku
+- Ember.js
+- Bootstrap
+- S3(direct upload to S3)
+
+Online demo: [company.herokuapp.com](http://company.herokuapp.com)
 
 ## How to Run
 
