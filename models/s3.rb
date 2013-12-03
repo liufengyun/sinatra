@@ -38,9 +38,11 @@ class S3
     end
 
     def set_rules
+      puts "enable CORS..."
       bucket.cors.clear
       bucket.cors.add(:allowed_methods => %w(GET), :allowed_origins => %w(*), :allowed_headers => %w(*))
       bucket.cors.add(:allowed_methods => %w(PUT POST), :allowed_origins => ["http://#{Configuration.host}", "https://#{Configuration.host}"], :allowed_headers => %w(*))
+      puts "done!"
     end
 
     def bucket
