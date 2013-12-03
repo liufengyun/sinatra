@@ -9,8 +9,7 @@ require 'rspec/expectations'
 require 'rack/test'
 
 # disable logging
-# disable :logging
-# ActiveRecord::Base.logger = nil
+ActiveRecord::Base.logger = nil
 
 World do
   include Rack::Test::Methods
