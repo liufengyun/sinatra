@@ -40,16 +40,13 @@
   </div>
 
   <script type="text/x-handlebars">
-    <h2>Welcome to Sinatra!</h2>
-
     {{outlet}}
     {{outlet modal}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="companies">
-    <p class="clearfix">
-      <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#new-company-dialog">New Company</button>
-    </p>
+    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#new-company-dialog">New Company</button>
+    <h2>Companies</h2>
 
     <div class="modal fade" id="new-company-dialog">
       <div class="modal-dialog">
@@ -115,23 +112,23 @@
       </thead>
       <tbody>
         {{#each itemController="company"}}
-        <tr {{action "editPersons" on="click"}} {{bind-attr class="selected:active"}}>
+        <tr {{bind-attr class="selected:active"}} {{action 'selectRow' bubbles=false on=click}}>
           <td>{{name}}</td>
           <td>{{country}}</td>
           <td>{{city}}</td>
           <td>{{address}}</td>
           <td>{{email}}</td>
           <td>{{phone}}</td>
-          <td>
-            <i class="glyphicon glyphicon-trash destroy" {{action 'destroyCompany'}}></i>
-            <i class="glyphicon glyphicon-edit edit" {{action 'editCompany'}}></i>
+          <td class="controls">
+            <i class="glyphicon glyphicon-trash" title="delete company" {{action 'destroyCompany' bubbles=false}}></i>
+            <i class="glyphicon glyphicon-edit" title="edit company information" {{action 'editCompany' bubbles=false}}></i>
+            <i class="glyphicon glyphicon-user" title="manage users" {{action 'editPersons' bubbles=false}} ></i>
           </td>
         </tr>
         {{/each}}
       </tbody>
     </table>
 
-    {{outlet persons}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="edit-company">
@@ -186,15 +183,41 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="persons">
-    <div class="form">
+    {{#link-to 'companies' class="btn btn-primary pull-right"}}Return to Companies{{/link-to}}
+    <h2>{{company.name}}</h2>
+    <p class="clearfix">
+      <i class="glyphicon glyphicon-map-marker"></i>
+      {{company.country}}/{{company.city}}/{{company.address}}
+      <i class="glyphicon glyphicon-phone-alt"></i>
+      {{company.phone}}
+      <i class="glyphicon glyphicon-envelope"></i>
+      {{company.email}}
+    </p>
+
+    <p>
       {{input type="text" id="new-person" placeholder="Add New Person" value=newName action="createPerson" class="form-control"}}
     </div>
 
-    <ul>
-    {{#each}}
-      <li>{{name}}</li>
-    {{/each}}
-    </ul>
+    <table class="table table-bordered">
+      <tbody>
+      {{#each itemController="person"}}
+        <tr>
+          <td>
+            {{#if isEditing}}
+              {{edit-person class="edit" value=name placeholder="input user name" focus-out="updatePerson"  insert-newline="updatePerson"}}
+            {{else}}
+              <span title="double click to edit" {{action 'editPerson' bubbles=false on=doubleClick}}>{{name}}</span>
+            {{/if}}
+          </td>
+          <td><input type="file"></td>
+          <td>
+            <i class="glyphicon glyphicon-trash" title="delete person" {{action 'destroyPerson' bubbles=false}}></i>
+            <i class="glyphicon glyphicon-edit" title="edit person information" {{action 'editPerson' bubbles=false}}></i>
+          </td>
+        </li>
+      {{/each}}
+      </tbody>
+    </table>
   </script>
 
   <script src="js/libs/jquery-1.10.2.js"></script>

@@ -7,9 +7,9 @@ App.Router = Ember.Router.extend({
 });
 
 App.Router.map(function() {
-  this.resource('companies')
+  this.resource('companies');
   this.resource('company', { path: '/company/:company_id' }, function() {
-    this.route('persons');
+    this.resource('persons');
   });
 });
 
@@ -45,21 +45,6 @@ App.CompaniesRoute = Ember.Route.extend({
     return Ember.$.getJSON('/companies').then(function(data) {
       return data.companies;
     })
-  },
-  actions: {
-    showPersonsPanel: function(company_id) {
-      this.controllerFor('persons').set('company_id', company_id);
-      return this.render('persons', {
-        into: 'companies',
-        outlet: 'persons'
-      });
-    },
-    hidePersonsPanel: function() {
-      return this.disconnectOutlet({
-        outlet: 'persons',
-        parentView: 'companies'
-      });
-    }
   }
 });
 
@@ -88,12 +73,18 @@ App.CompaniesController = Ember.ArrayController.extend({
     },
     updateSelectedRow: function(row) {
       var lastSelected = this.get('selectedRow');
-      if (lastSelected) {
+
+      if (lastSelected === row) return;
+
+      if (lastSelected && !lastSelected.isDestroyed) {
         lastSelected.set('selected', false);
       }
 
       row.set('selected', true);
       this.set('selectedRow', row);
+    },
+    deleteCompany: function(company) {
+      this.removeObject(company);
     }
   }
 })
@@ -105,15 +96,12 @@ App.CompanyController = Ember.ObjectController.extend({
       copyModel.set('originalController', this);
       this.send("openModal", "edit-company", copyModel);
     },
-    acceptChanges: function () {
-      this.get('model').save();
-    },
     destroyCompany: function () {
       var company = this.get('model');
       var self = this;
       Ember.$.post('/companies/' + company.id, {_method: 'delete'}).then(function(data) {
         if (data.success) {
-          self.target.parentController.removeObject(company)
+          self.send('deleteCompany', company);
         } else {
           alert(data.message);
         }
@@ -121,8 +109,10 @@ App.CompanyController = Ember.ObjectController.extend({
     },
     editPersons: function() {
       var company = this.get('model');
+      this.transitionToRoute('persons', company);
+    },
+    selectRow: function() {
       this.send('updateSelectedRow', this);
-      this.transitionToRoute('company.persons', company);
     }
   }
 });
@@ -174,28 +164,27 @@ App.EditCompanyView = Ember.View.extend({
 
 //////// Persons
 
-App.CompanyPersonsRoute = Ember.Route.extend({
+App.PersonsRoute = Ember.Route.extend({
   model: function(params) {
-    this.set('company_id', params.company_id);
-    return Ember.$.getJSON('/persons?company_id=' + params.company_id).then(function(data) {
+    var company = this.modelFor('company');
+    this.set('company', company);
+    return Ember.$.getJSON('/persons?company_id=' + company.id).then(function(data) {
       return data.persons;
     })
   },
-  renderTemplate: function(company_id) {
-    return this.render('persons', {
-      into: 'companies',
-      outlet: 'persons'
-    });
+  setupController: function(controller, model) {
+    controller.set('company', this.company);
+    controller.set('model', model);
   }
 });
 
 
-App.CompanyPersonsController = Ember.ArrayController.extend({
+App.PersonsController = Ember.ArrayController.extend({
   actions: {
     createPerson: function () {
       var self = this;
 
-      var payload = {name: this.get('newName'), company_id: this.company_id}
+      var payload = {name: this.get('newName'), company_id: this.company.id}
       Ember.$.post('/persons', payload).then(function(data) {
         if (data.success) {
           self.pushObject(data.person);
@@ -205,6 +194,48 @@ App.CompanyPersonsController = Ember.ArrayController.extend({
           alert(data.message);
         }
       })
+    },
+    deletePerson: function(person) {
+      this.removeObject(person);
     }
   }
 })
+
+App.PersonController = Ember.ObjectController.extend({
+  actions: {
+    editPerson: function () {
+      this.set('isEditing', true)
+    },
+    updatePerson: function() {
+      var person = this.get('model');
+      var self = this;
+
+      Ember.$.post('/persons/' + person.id, {_method: 'put', name: person.name}).then(function(data) {
+        if (data.success) {
+          self.set('isEditing', false);
+        } else {
+          alert(data.message);
+        }
+      })
+    },
+    destroyPerson: function () {
+      var person = this.get('model');
+      var self = this;
+      Ember.$.post('/persons/' + person.id, {_method: 'delete'}).then(function(data) {
+        if (data.success) {
+          self.send('deletePerson', person);
+        } else {
+          alert(data.message);
+        }
+      })
+    }
+  }
+});
+
+App.EditPersonView = Ember.TextField.extend({
+  didInsertElement: function () {
+    this.$().focus();
+  }
+});
+
+Ember.Handlebars.helper('edit-person', App.EditPersonView);

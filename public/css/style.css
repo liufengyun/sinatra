@@ -2,12 +2,15 @@ body {
   margin-top: 60px;
 }
 
-.destroy, .edit {
-  display: none;
+i {
   cursor: pointer;
 }
 
-tr.active .destroy,  tr.active .edit {
+.controls i {
+  display: none;
+}
+
+tr.active .controls i {
   display: inline;
 }
 
