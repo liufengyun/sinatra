@@ -240,12 +240,16 @@ App.PersonController = Ember.ObjectController.extend({
       var person = this.get('model');
       var self = this;
 
+      this.set('isUpdating', true);
+
       Ember.$.post('/persons/' + person.id, {_method: 'put', name: person.name}).then(function(data) {
         if (data.success) {
           self.set('isEditing', false);
         } else {
           alert(data.message);
         }
+
+        self.set('isUpdating', false);
       })
     },
     destroyPerson: function () {

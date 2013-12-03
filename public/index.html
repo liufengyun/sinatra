@@ -220,6 +220,9 @@
           <td>
             {{#if isEditing}}
               {{edit-person class="edit" value=name placeholder="input user name" focus-out="updatePerson"  insert-newline="updatePerson"}}
+              {{#if isUpdating}}
+                <img src="img/spinner.gif"/>
+              {{/if}}
             {{else}}
               <span title="double click to edit" {{action 'editPerson' bubbles=false on=doubleClick}}>{{name}}</span>
             {{/if}}
