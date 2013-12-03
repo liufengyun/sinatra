@@ -45,3 +45,24 @@ tr.active .controls i {
 .progress {
   margin-bottom: 0;
 }
+
+.loading-banner {
+  width: 200px;
+  margin: 0 auto;
+  padding: 5px;
+  border-width: 1px;
+  border-color: #f0c36d;
+  background-color: #f9edbe;
+  text-align: center;
+}
+
+.new-person-panel {
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.new-person-panel img {
+  position: absolute;
+  right: 5px;
+  top: 10px;
+}

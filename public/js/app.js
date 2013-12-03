@@ -13,6 +13,15 @@ App.Router.map(function() {
   });
 });
 
+App.LoadingRoute = Ember.Route.extend({
+  renderTemplate: function() {
+    this.render('loading', {
+      outlet: 'loading',
+      into: 'application'
+    });
+  }
+});
+
 App.IndexRoute = Ember.Route.extend({
   redirect: function() {
     this.transitionTo('companies');
@@ -53,6 +62,8 @@ App.CompaniesController = Ember.ArrayController.extend({
     createCompany: function () {
       var self = this;
 
+      this.set('isLoading', true);
+
       var payload = this.getProperties('name', 'country', 'city', 'address', 'email', 'phone')
       Ember.$.post('/companies', payload).then(function(data) {
         if (data.success) {
@@ -69,6 +80,8 @@ App.CompaniesController = Ember.ArrayController.extend({
         } else {
           alert(data.message);
         }
+
+        self.set('isLoading', true);
       })
     },
     updateSelectedRow: function(row) {
@@ -99,12 +112,16 @@ App.CompanyController = Ember.ObjectController.extend({
     destroyCompany: function () {
       var company = this.get('model');
       var self = this;
+
+      this.set('isDeleting', true);
       Ember.$.post('/companies/' + company.id, {_method: 'delete'}).then(function(data) {
         if (data.success) {
           self.send('deleteCompany', company);
         } else {
           alert(data.message);
         }
+
+        self.set('isDeleting', false);
       })
     },
     editPersons: function() {
@@ -125,6 +142,8 @@ App.EditCompanyController = Ember.ObjectController.extend({
 
       var payload = this.getProperties('name', 'country', 'city', 'address', 'email', 'phone');
       payload['_method'] = 'put';
+
+      this.set('isLoading', true);
       Ember.$.post('/companies/' + company.id, payload).then(function(data) {
         if (data.success) {
           var control = company.get('originalController');
@@ -134,6 +153,8 @@ App.EditCompanyController = Ember.ObjectController.extend({
         } else {
           alert(data.message);
         }
+
+        self.set('isLoading', false);
       })
 
     }
@@ -184,6 +205,8 @@ App.PersonsController = Ember.ArrayController.extend({
     createPerson: function () {
       var self = this;
 
+      this.set('isLoading', true);
+
       var payload = {name: this.get('newName'), company_id: this.company.id}
       Ember.$.post('/persons', payload).then(function(data) {
         if (data.success) {
@@ -193,6 +216,8 @@ App.PersonsController = Ember.ArrayController.extend({
         } else {
           alert(data.message);
         }
+
+        self.set('isLoading', false);
       })
     },
     deletePerson: function(person) {
@@ -226,12 +251,16 @@ App.PersonController = Ember.ObjectController.extend({
     destroyPerson: function () {
       var person = this.get('model');
       var self = this;
+
+      this.set('isDeleting', true);
       Ember.$.post('/persons/' + person.id, {_method: 'delete'}).then(function(data) {
         if (data.success) {
           self.send('deletePerson', person);
         } else {
           alert(data.message);
         }
+
+        self.set('isDeleting', false);
       })
     },
     fileUploadSuccess: function(url) {
@@ -245,15 +274,18 @@ App.PersonController = Ember.ObjectController.extend({
         }
       })
     },
-    detachFile: function() {
+    detachFile: function(callback) {
       var person = this.get('model');
       var self = this;
+
+      this.set('isDetaching', true);
       Ember.$.post('/persons/' + person.id + '/detach', {_method: 'delete'}).then(function(data) {
         if (data.success) {
           self.setProperties(data.person);
         } else {
           alert(data.message);
         }
+        self.set('isDetaching', false);
       })
     }
   }

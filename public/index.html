@@ -41,6 +41,7 @@
   </div>
 
   <script type="text/x-handlebars">
+    {{outlet loading}}
     {{outlet}}
     {{outlet modal}}
   </script>
@@ -93,6 +94,9 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" {{action 'createCompany'}}>Create</button>
+            {{#if isLoading}}
+              <img src="img/spinner.gif"/>
+            {{/if}}
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -124,6 +128,9 @@
             <i class="glyphicon glyphicon-trash" title="delete company" {{action 'destroyCompany' bubbles=false}}></i>
             <i class="glyphicon glyphicon-edit" title="edit company information" {{action 'editCompany' bubbles=false}}></i>
             <i class="glyphicon glyphicon-user" title="manage users" {{action 'editPersons' bubbles=false}} ></i>
+            {{#if isDeleting}}
+              <img src="img/spinner.gif"/>
+            {{/if}}
           </td>
         </tr>
         {{/each}}
@@ -178,6 +185,9 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary update">Update</button>
+            {{#if isLoading}}
+              <img src="img/spinner.gif"/>
+            {{/if}}
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -196,8 +206,11 @@
       {{company.email}}
     </p>
 
-    <p>
+    <div class="new-person-panel">
       {{input type="text" id="new-person" placeholder="Add New Person" value=newName action="createPerson" class="form-control"}}
+      {{#if isLoading}}
+        <img src="img/spinner.gif" class="pull-right"/>
+      {{/if}}
     </div>
 
     <table class="table table-bordered">
@@ -213,20 +226,26 @@
             {{#if hasFile}}
               <a {{bindAttr href="passport_url"}} {{bindAttr download="passport_file_name"}}>{{passport_file_name}}</a>
               [<a href="javascript:void(0)" title="delete file" {{action 'detachFile' bubbles=false}}>x</a>]
+              {{#if isDetaching}}
+                <img src="img/spinner.gif"/>
+              {{/if}}
             {{/if}}
           </td>
           <td>
             {{view App.FileUploadView}}
           </td>
           <td>
-            <i class="glyphicon glyphicon-trash" title="delete person" {{action 'destroyPerson' bubbles=false}}></i>
             <i class="glyphicon glyphicon-edit" title="edit person information" {{action 'editPerson' bubbles=false}}></i>
+            <i class="glyphicon glyphicon-trash" title="delete person" {{action 'destroyPerson' bubbles=false}}></i>
+            {{#if isDeleting}}
+              <img src="img/spinner.gif"/>
+            {{/if}}
           </td>
         </li>
       {{/each}}
       </tbody>
     </table>
-    <p>Note: (1) use the input box to add persons. (2)double click can also enable edit person name.</p>
+    <p>Note: (1) use the input box to add persons. (2) double click can also enable edit person name.</p>
   </script>
 
   <script type="text/x-handlebars" data-template-name="file">
@@ -248,6 +267,13 @@
         <div class='progress-bar progress-bar-warning'></div>
       </div>
     </form>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="loading">
+    <div class="loading-banner">
+      <img src="img/spinner.gif"/>
+      loading ...
+    </div>
   </script>
 
   <script src="js/libs/jquery-1.10.2.js"></script>
