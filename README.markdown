@@ -2,9 +2,9 @@
 
 This is a sinatra application which demonstrates usage of following technologies:
 
-- cucumber
+- Cucumber
 - PostgreSQL
-- heroku
+- Heroku
 - Ember.js
 - Bootstrap
 - S3(direct upload to S3)
