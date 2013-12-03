@@ -79,7 +79,7 @@ post '/persons/:id/policy' do
   policy = S3.policy(person)
   signature = S3.signature(policy)
 
-  json policy: policy, signature: signature, key: person.passport_s3_upload_key, success_action_redirect: '/'
+  json policy: policy, signature: signature, key: person.passport_s3_upload_key, success_action_redirect: '/', action: S3.base_uri
 end
 
 # client s3 upload success, process params[:s3_url]
