@@ -228,6 +228,17 @@ App.PersonController = Ember.ObjectController.extend({
           alert(data.message);
         }
       })
+    },
+    fileUploadSuccess: function(url) {
+      var person = this.get('model');
+      var self = this;
+      Ember.$.post('/persons/' + person.id + '/attach', {_method: 'put', s3_url: url}).then(function(data) {
+        if (data.success) {
+          self.setProperties(data.person);
+        } else {
+          alert(data.message);
+        }
+      })
     }
   }
 });
@@ -235,6 +246,45 @@ App.PersonController = Ember.ObjectController.extend({
 App.EditPersonView = Ember.TextField.extend({
   didInsertElement: function () {
     this.$().focus();
+  }
+});
+
+App.FileUploadView = Ember.View.extend({
+  templateName: 'file',
+  didInsertElement: function() {
+    this.$('form').fileupload({
+      forceIframeTransport: true,
+      autoUpload: true,
+      add: this.fileAdded.bind(this),
+      success: this.success.bind(this),
+      done: this.done.bind(this),
+      progress: this.progress.bind(this)
+    });
+  },
+  fileAdded: function(e, data) {
+    var self = this;
+    var controller = this.get('controller');
+    $.post('/persons/' + controller.get('id') + '/policy', function(res) {
+      self.$('form').attr('action', res.action)
+      self.$('form').find('input[name=key]').val(res.key);
+      self.$('form').find('input[name=policy]').val(res.policy);
+      self.$('form').find('input[name=signature]').val(res.signature);
+
+      self.$('form').find('.progress').removeClass('hide');
+
+      data.submit();
+    });
+  },
+  success: function(data) {
+    var url = $(data).find('Location').text();
+    this.send('fileUploadSuccess', url);
+  },
+  done: function(e, data) {
+    this.$('form').find('.progress').addClass('hide');
+  },
+  progress: function(e, data) {
+    progress = parseInt(data.loaded / data.total * 100, 10);
+    this.$(".progress-bar").css({width: progress + '%'});
   }
 });
 
