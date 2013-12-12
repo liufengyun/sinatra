@@ -81,7 +81,7 @@ App.CompaniesController = Ember.ArrayController.extend({
           alert(data.message);
         }
 
-        self.set('isLoading', true);
+        self.set('isLoading', false);
       })
     },
     updateSelectedRow: function(row) {
